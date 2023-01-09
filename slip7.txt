@@ -1,0 +1,66 @@
+Q. 1) Execute the following HDFS commands on Hadoop environment.` [10]
+a) mkdir
+b) copy the demo.txt in hadoop environment.
+c) move the directory into another directory.
+d) tail
+e) delete file created in hadoop environment.
+
+1) mkdir
+
+hadoop fs -mkdir dir							(hadoop fs -mkdir /demo)
+
+C:\hadoop-3.3.4\sbin>hadoop fs -ls
+
+
+
+2)copy demo.txt in hadoop
+
+hadoop fs -copyFromLocal "C:\Users\Acer\Desktop\demo.txt" data1\      (hadoop fs -copyFromLocal /opt/hadoop/BDA/a2.txt /SG)
+
+hadoop fs -ls data1\										(hadoop fs -ls /SG)
+
+
+3)  move directory to another directory
+
+
+hadoop fs -mv dir\ data1\									(hadoop fs -mv /SG/P1.txt /SG2)
+
+hadoop fs -ls data1\
+
+4) tail 
+hadoop fs -tail -f data1\emp.txt								(hadoop fs -tail -f /p1/abc.txt)
+data is here...
+
+5) delete file from hadoop
+
+
+hadoop fs -rm data1\four.txt									(hadoop fs -rm /P1/a.txt)
+
+
+2023-01-09 11:31:24,473 INFO Configuration.deprecation: io.bytes.per.checksum is deprecated. Instead, use dfs.bytes-per-checksum
+Deleted data1/four.txt
+
+C:\hadoop-3.3.4\sbin>hadoop fs -ls data1
+
+-------------------------------------------------------------------
+Q.2) 
+Write a basic Word Count Map Reduce program using python/java to understand Map
+Reduce Paradigm. create file called sample.txt whose contents are as follows:
+Dear, Bear, River, Car, Car, River, Deer, Car and Bear
+
+from mrjob.job import MRJob
+class Count(MRJob):
+	
+	def mapper(self, _, line):
+		for word in line.split():
+			yield(word, 1)
+			
+	def reducer(self, word, counts):
+		yield(word, sum(counts))
+
+		
+if __name__ == '__main__':
+	Count.run()
+
+
+python CountWord.py -r hadoop hdfs:///hadoop_directory_name/sample.txt

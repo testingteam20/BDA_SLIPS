@@ -1,0 +1,159 @@
+Q.1) 
+Execute the following HDFS commands on Hadoop environment. [10]
+a) Create a teacher.txt file in Hadoop environment and copy this file in root directory.
+b) display the content of teacher.txt file.
+c) display the list of files in specified directory.(Create files and directory accordingly.)
+d) implement tail command on teacher.txt file.
+e) remove teacher.txt file from directory.
+(Note: you may create a file/directory depending on the command requirements.)
+
+a) Create a teacher.txt file in Hadoop environment and copy this file in root directory.
+hadoop fs -copyToLocal teacher.txt "C:\Users\Acer\Desktop\hadoop_data"     ( hadoop fs -copyToLocal /SG/P1.txt /opt/hadoop/Desktop/AAAAA )
+
+
+b) display the content of teacher.txt file.
+hadoop  fs -cat teacher.txt										(hadoop fs -cat teacher.txt)
+
+c) display the list of files in specified directory.(Create files and directory accordingly.)
+hadoop fs -ls data1\								(hadoop fs -ls /data1)
+
+
+d) implement tail command on teacher.txt file.
+hadoop fs -tail teacher.txt									(hadoop fs -tail teacher.txt)
+
+e) remove teacher.txt file from directory.						
+
+
+C:\hadoop-3.3.4\sbin>hadoop fs -rm teacher.txt					(hadoop fs -rm teacher.txt)
+2023-01-09 14:10:16,586 INFO Configuration.deprecation: io.bytes.per.checksum is deprecated. Instead, use dfs.bytes-per-checksum
+Deleted teacher.txt
+------------------------------------------------------------------------------------
+Q2: Write a MapReduce program to analyze weather data set and print whether the day is
+shinny or cool day.Hint: Weather sensors collecting data every hour at many locations across
+the globe gather a large volume of log data, which is a good candidate for analysis with Map
+Reduce, since it is semi structured and record-oriented. 
+
+// importing Libraries
+import java.io.IOException;
+import java.util.Iterator;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
+import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.Mapper;
+import org.apache.hadoop.mapreduce.Reducer;
+import org.apache.hadoop.conf.Configuration;
+
+public class MyMaxMin {
+	
+	public static class MaxTemperatureMapper extends
+			Mapper<LongWritable, Text, Text, Text> {
+
+	public static final int MISSING = 9999;
+		
+	@Override
+		public void map(LongWritable arg0, Text Value, Context context)
+				throws IOException, InterruptedException {
+
+		String line = Value.toString();
+			
+
+			if (!(line.length() == 0)) {
+				
+				
+				String date = line.substring(6, 14);
+
+				
+				float temp_Max = Float.parseFloat(line.substring(39, 45).trim());
+				
+
+				
+				float temp_Min = Float.parseFloat(line.substring(47, 53).trim());
+
+				
+				if (temp_Max > 30.0) {
+					
+					context.write(new Text("The Day is Hot Day :" + date),
+										new Text(String.valueOf(temp_Max)));
+				}
+
+				
+				if (temp_Min < 15) {
+					
+					context.write(new Text("The Day is Cold Day :" + date),
+							new Text(String.valueOf(temp_Min)));
+				}
+			}
+		}
+
+	}
+
+
+	
+	public static class MaxTemperatureReducer extends
+			Reducer<Text, Text, Text, Text> {
+
+
+		
+		public void reduce(Text Key, Iterator<Text> Values, Context context)
+				throws IOException, InterruptedException {
+
+			
+			
+			String temperature = Values.next().toString();
+			context.write(Key, new Text(temperature));
+		}
+
+	}
+
+	
+	public static void main(String[] args) throws Exception {
+
+		
+		Configuration conf = new Configuration();
+		
+			
+		Job job = new Job(conf, "weather example");
+		
+		// Assigning the driver class name
+		job.setJarByClass(MyMaxMin.class);
+
+		
+		job.setMapOutputKeyClass(Text.class);
+		
+		
+		job.setMapOutputValueClass(Text.class);
+
+		
+		job.setMapperClass(MaxTemperatureMapper.class);
+		
+		
+		job.setReducerClass(MaxTemperatureReducer.class);
+
+		
+		job.setInputFormatClass(TextInputFormat.class);
+		
+		
+		job.setOutputFormatClass(TextOutputFormat.class);
+
+		
+		Path OutputPath = new Path(args[1]);
+
+		
+		FileInputFormat.addInputPath(job, new Path(args[0]));
+
+		
+		FileOutputFormat.setOutputPath(job, new Path(args[1]));
+
+		
+		OutputPath.getFileSystem(conf).delete(OutputPath);
+
+		
+		System.exit(job.waitForCompletion(true) ? 0 : 1);
+
+	}
+}

@@ -1,0 +1,38 @@
+Q.1 Execute the following HDFS commands on Hadoop environment. [10]
+a) copy one file from one directory to another within HDFS.
+b) show the statistics about the directory in the specified format.(%b,%g,%u,%n)
+c) implement text command.
+d) fsck
+e) cat command
+
+1)  copy one file from one directory to another within HDFS
+hadoop fs -cp data\two.txt data1								(hadoop fs -cp /opt/hadoop/BDA/a3.txt /SG2)
+
+hadoop fs -ls data1\
+
+
+
+2)  show the statistics about the directory in the specified format.(%b,%g,%u,%n)
+hadoop fs -stat  data\Two.txt									(hadoop fs -stat /data/Two.txt)
+2023-01-08 16:36:12
+
+
+3) implement text command
+hadoop fs -text data\two.txt									(hadoop fs -text /data/two.txt)
+data is here...
+
+
+4)  fsck 
+
+hadoop fsck												(hadoop fsck /)
+
+
+5)  cat command
+
+hadoop fs -cat data\one.txt							(hadoop fs -cat /opt/hadoop/BDA/a1.txt)
+
+
+-----------------------------------------------------------------------------------
+Q2:
+	Write MapReduce program using python/java to find out how many reviews for each
+rating. consider this dataset that consists of hotel reviews and ratings.

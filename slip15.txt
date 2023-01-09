@@ -1,0 +1,54 @@
+Q.1) 
+Execute the following HDFS commands on Hadoop environment. [10]
+a) create and move the bank directory into another directory within hadoop environment.
+b) change the permission of the file.
+c) Display last few lines of the above customer.txt file.
+d) change the replication factor of customer.txt file in HDFS.
+e) delete bank directory from HDFS.
+(Note: you may create a file/directory depending on the command requirements.)
+
+a) create and move the bank directory into another directory within hadoop environment.
+hadoop fs -mkdir bank\									(hadoop fs -mkdir /bank)
+hadoop fs -mv bank data1									(hadoop fs -mv /bank /data1) 
+
+hadoop fs -ls data1\
+
+b) change the permission of the file.
+hadoop fs -chmod 777 data1\college.txt						(hadoop fs -chmod 777 /data1/college.txt)
+hadoop fs -ls data1\
+
+c) Display last few lines of the above customer.txt file.
+hadoop fs -tail data1\employee.txt								(hadoop fs -tail /data1/employee.txt)
+
+
+d) change the replication factor of customer.txt file in HDFS.		
+hadoop fs -setrep 2 data1\employee.txt							(hadoop fs -setrep 3 /data1/employee.txt)
+Replication 2 set: data1/employee.txt
+
+e) delete bank directory from HDFS.
+
+hadoop fs -rmr data1\bank									(hadoop -rmr /data/bank)
+rmr: DEPRECATED: Please use '-rm -r' instead.
+2023-01-09 14:16:36,807 INFO Configuration.deprecation: io.bytes.per.checksum is deprecated. Instead, use dfs.bytes-per-checksum
+Deleted data1/bank
+-----------------------------------------------------------------
+
+Q.2) 
+Write basic Word Count Map Reduce program using python/java to understand Map
+Reduce Paradigm.
+
+from mrjob.job import MRJob
+
+class Count(MRJob):
+    def mapper(self, _, line):
+        for word in line.split():
+            yield(word, 1)
+    def reducer(self, word, counts):
+        yield(word, sum(counts))
+
+if __name__ == '__main__':
+    Count.run()
+
+python CountWord.py -r hadoop hdfs:///hadoop_directory_name/data.txt
+
+ 

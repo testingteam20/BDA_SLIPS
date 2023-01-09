@@ -1,0 +1,255 @@
+Q.1 Execute the following HDFS commands on Hadoop environment. [10]
+a) Create a emp.txt file in root directory and move this file in Hadoop environment.
+b) display the statistics about the file.(use default format).
+c) change the permission of the file.
+d) implement checksum command
+e) delete emp.txt file.
+
+1) copy file from local to hadoop
+
+hadoop fs -mv "C:\Users\Acer\Desktop\emp.txt" data1		(hadoop fs -put /opt/hadoop/BDA/P1.txt /SG)
+
+C:\hadoop-3.3.4\sbin>hadoop fs -ls data1\				 (hadoop fs -ls /data1)
+Found 2 items
+-rwx------   1 Acer           None         12 2023-01-08 23:12 data1/emp.txt
+-rw-r--r--   1 Administrators None         15 2023-01-08 22:07 data1/three.txt
+
+
+2) display the statistics about the file.(use default format).     (hadoop fs -stat /test/test.txt)
+
+hadoop fs -stat %y data1/emp.txt
+stat: `y': No such file or directory
+2023-01-08 17:42:49
+
+3) change the permission of the file
+
+hadoop fs -chmod 777 data1\emp.txt								(hadoop fs -chmod 0777 /test/test.txt)					
+
+C:\hadoop-3.3.4\sbin>hadoop fs -ls data1   						(hadoop fs -ls/)                 
+Found 2 items
+-rwxrwxrwx   1 Acer           None         12 2023-01-08 23:12 data1/emp.txt
+-rwxrwxrwx   1 Administrators None         15 2023-01-08 22:07 data1/three.txt
+
+4)implement checksum command
+
+
+hadoop fs -checksum data1/emp.txt                       (hadoop fs -checksum /data1/emp.txt)
+data1/emp.txt   NONE
+
+5) delete emp.txt							
+hadoop fs -rm data1\emp.txt					( hadoop fs -rm /data1/emp.txt)
+2023-01-08 23:50:38,899 INFO Configuration.deprecation: io.bytes.per.checksum is deprecated. Instead, use dfs.bytes-per-checksum
+Deleted data1/emp.txt
+
+-----------------------------------------------------------------------------------
+Q.2:
+Weather Report POC-Map Reduce Program to analyse time-temperature statistics and
+generate report with max/min temperature.Problem Statement is as follows [15]
+1. The system receives temperatures of various cities(Austin, Boston,etc) of USA
+captured at regular intervals of time on each day in an input file.
+2. System will process the input data file and generates a report with Maximum and
+Minimum temperatures of each day along with time.
+3. Generates a separate output report for each city.
+Ex: Austin-r-00000
+Boston-r-00000
+Newjersy-r-00000
+Baltimore-r-00000
+California-r-00000
+Newyork-r-00000
+Expected output:- In each output file record should be like this:
+25-Jan-2014 Time: 12:34:542 MinTemp: -22.3 Time: 05:12:345 MaxTemp: 35.7
+
+
+import java.io.IOException;
+import java.util.StringTokenizer;
+
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Mapper;
+import org.apache.hadoop.mapreduce.Reducer;
+import org.apache.hadoop.mapreduce.lib.output.MultipleOutputs;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
+
+/**
+* @author devinline
+*/
+public class CalculateMaxAndMinTemeratureWithTime {
+public static String calOutputName = "California";
+public static String nyOutputName = "Newyork";
+public static String njOutputName = "Newjersy";
+public static String ausOutputName = "Austin";
+public static String bosOutputName = "Boston";
+public static String balOutputName = "Baltimore";
+
+public static class WhetherForcastMapper extends
+  Mapper<Object, Text, Text, Text> {
+
+ public void map(Object keyOffset, Text dayReport, Context con)
+   throws IOException, InterruptedException {
+  StringTokenizer strTokens = new StringTokenizer(
+    dayReport.toString(), "\t");
+  int counter = 0;
+  Float currnetTemp = null;
+  Float minTemp = Float.MAX_VALUE;
+  Float maxTemp = Float.MIN_VALUE;
+  String date = null;
+  String currentTime = null;
+  String minTempANDTime = null;
+  String maxTempANDTime = null;
+
+  while (strTokens.hasMoreElements()) {
+   if (counter == 0) {
+    date = strTokens.nextToken();
+   } else {
+    if (counter % 2 == 1) {
+     currentTime = strTokens.nextToken();
+    } else {
+     currnetTemp = Float.parseFloat(strTokens.nextToken());
+     if (minTemp > currnetTemp) {
+      minTemp = currnetTemp;
+      minTempANDTime = minTemp + "AND" + currentTime;
+     }
+     if (maxTemp < currnetTemp) {
+      maxTemp = currnetTemp;
+      maxTempANDTime = maxTemp + "AND" + currentTime;
+     }
+    }
+   }
+   counter++;
+  }
+  // Write to context - MinTemp, MaxTemp and corresponding time
+  Text temp = new Text();
+  temp.set(maxTempANDTime);
+  Text dateText = new Text();
+  dateText.set(date);
+  try {
+   con.write(dateText, temp);
+  } catch (Exception e) {
+   e.printStackTrace();
+  }
+  
+  temp.set(minTempANDTime);
+  dateText.set(date);
+  con.write(dateText, temp);
+  
+ }
+}
+
+public static class WhetherForcastReducer extends
+  Reducer<Text, Text, Text, Text> {
+ MultipleOutputs<Text, Text> mos;
+
+ public void setup(Context context) {
+  mos = new MultipleOutputs<Text, Text>(context);
+ }
+
+ public void reduce(Text key, Iterable<Text> values, Context context)
+   throws IOException, InterruptedException {
+  int counter = 0;
+  String reducerInputStr[] = null;
+  String f1Time = "";
+  String f2Time = "";
+  String f1 = "", f2 = "";
+  Text result = new Text();
+  for (Text value : values) {
+   
+   if (counter == 0) {
+    reducerInputStr = value.toString().split("AND");
+    f1 = reducerInputStr[0];
+    f1Time = reducerInputStr[1];
+   }
+
+   else {
+    reducerInputStr = value.toString().split("AND");
+    f2 = reducerInputStr[0];
+    f2Time = reducerInputStr[1];
+   }
+
+   counter = counter + 1;
+  }
+  if (Float.parseFloat(f1) > Float.parseFloat(f2)) {
+   
+   result = new Text("Time: " + f2Time + " MinTemp: " + f2 + "\t"
+     + "Time: " + f1Time + " MaxTemp: " + f1);
+  } else {
+   
+   result = new Text("Time: " + f1Time + " MinTemp: " + f1 + "\t"
+     + "Time: " + f2Time + " MaxTemp: " + f2);
+  }
+  String fileName = "";
+  if (key.toString().substring(0, 2).equals("CA")) {
+   fileName = CalculateMaxAndMinTemeratureTime.calOutputName;
+  } else if (key.toString().substring(0, 2).equals("NY")) {
+   fileName = CalculateMaxAndMinTemeratureTime.nyOutputName;
+  } else if (key.toString().substring(0, 2).equals("NJ")) {
+   fileName = CalculateMaxAndMinTemeratureTime.njOutputName;
+  } else if (key.toString().substring(0, 3).equals("AUS")) {
+   fileName = CalculateMaxAndMinTemeratureTime.ausOutputName;
+  } else if (key.toString().substring(0, 3).equals("BOS")) {
+   fileName = CalculateMaxAndMinTemeratureTime.bosOutputName;
+  } else if (key.toString().substring(0, 3).equals("BAL")) {
+   fileName = CalculateMaxAndMinTemeratureTime.balOutputName;
+  }
+  String strArr[] = key.toString().split("_");
+  key.set(strArr[1]); //Key is date value
+  mos.write(fileName, key, result);
+ }
+
+ @Override
+ public void cleanup(Context context) throws IOException,
+   InterruptedException {
+  mos.close();
+ }
+}
+
+public static void main(String[] args) throws IOException,
+  ClassNotFoundException, InterruptedException {
+ Configuration conf = new Configuration();
+ Job job = Job.getInstance(conf, "Wheather Statistics of USA");
+ job.setJarByClass(CalculateMaxAndMinTemeratureWithTime.class);
+
+ job.setMapperClass(WhetherForcastMapper.class);
+ job.setReducerClass(WhetherForcastReducer.class);
+
+ job.setMapOutputKeyClass(Text.class);
+ job.setMapOutputValueClass(Text.class);
+
+ job.setOutputKeyClass(Text.class);
+ job.setOutputValueClass(Text.class);
+
+ MultipleOutputs.addNamedOutput(job, calOutputName,
+   TextOutputFormat.class, Text.class, Text.class);
+ MultipleOutputs.addNamedOutput(job, nyOutputName,
+   TextOutputFormat.class, Text.class, Text.class);
+ MultipleOutputs.addNamedOutput(job, njOutputName,
+   TextOutputFormat.class, Text.class, Text.class);
+ MultipleOutputs.addNamedOutput(job, bosOutputName,
+   TextOutputFormat.class, Text.class, Text.class);
+ MultipleOutputs.addNamedOutput(job, ausOutputName,
+   TextOutputFormat.class, Text.class, Text.class);
+ MultipleOutputs.addNamedOutput(job, balOutputName,
+   TextOutputFormat.class, Text.class, Text.class);
+
+ // FileInputFormat.addInputPath(job, new Path(args[0]));
+ // FileOutputFormat.setOutputPath(job, new Path(args[1]));
+ Path pathInput = new Path(
+   "hdfs://192.168.213.133:54310/weatherInputData/input_temp.txt");
+ Path pathOutputDir = new Path(
+   "hdfs://192.168.213.133:54310/user/hduser1/testfs/output_mapred3");
+ FileInputFormat.addInputPath(job, pathInput);
+ FileOutputFormat.setOutputPath(job, pathOutputDir);
+
+ try {
+  System.exit(job.waitForCompletion(true) ? 0 : 1);
+ } catch (Exception e) {
+  // TODO Auto-generated catch block
+  e.printStackTrace();
+ }
+}
+
+}
+

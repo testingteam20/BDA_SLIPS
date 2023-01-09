@@ -1,0 +1,48 @@
+Q.1) Execute the following HDFS commands on Hadoop environment. [10]
+a) Create a college.txt file in root directory and move this file in Hadoop environment.
+b) Count the number of files and directories in HDFS.(use specified format as option
+-v,-h,-q)
+c) du command
+d) implement find command for college.txt
+e) Remove a bank_details directory from Hadoop environment. (Create a bank_details
+directory).
+(Note: you may create a file/directory depending on the command requirements.)
+
+1) Create a college.txt file in root directory and move this file in Hadoop environment.
+
+hadoop fs -copyFromLocal "C:\Users\Acer\Desktop\college.txt" data1\         (hadoop fs -copyFromLocal /opt/hadoop/BDA/a2.txt /data1)
+
+hadoop fs -ls data1\
+
+2) Count the number of files and directories in HDFS.(use specified format as option
+-v,-h,-q)
+
+hadoop fs -count [-v] [-h] [-q] data1\college.txt						(hadoop fs -count /)
+count: `[-v]': No such file or directory
+count: `[-h]': No such file or directory
+count: `[-q]': No such file or directory
+           0            1                 22 data1/college.txt
+
+
+
+3) du command
+
+hadoop fs -du data1\college.txt							(hadoop fs -du /data1/college.txt)
+22  22  data1/college.txt
+
+4) implement find command for college.txt  					(hadoop fs -find /data1)
+
+hadoop fs -find data1\college.txt
+data1/college.txt
+
+
+5) Remove a bank_details directory from Hadoop environment. (Create a bank_details
+directory).
+
+hadoop fs -mkdir bank_details									(hadoop fs -mkdir /bank_details)
+
+C:\hadoop-3.3.4\sbin>hadoop fs -rmr bank_details
+rmr: DEPRECATED: Please use '-rm -r' instead.
+2023-01-09 13:56:57,648 INFO Configuration.deprecation: io.bytes.per.checksum is deprecated. Instead, use dfs.bytes-per-checksum
+Deleted bank_details
+-------------------------------------------------------------------------

@@ -1,0 +1,48 @@
+Q.1)
+ Execute the following HDFS commands on Hadoop environment. [10]
+a) display summary of the amount of disk usage of all files.
+b) change the permission of the file.
+c) Create an employee.txt file with some content and Moves this file from local file
+system to the Hadoop file system.
+d) copy one file from one directory to another within HDFS.
+e) display last 1kb data of employee.txt file.
+(Note: you may create a file/directory depending on the command requirements.)
+
+1) display summary of the amount of disk usage of all files.
+
+hadoop fs -du data\two.txt									(hadoop fs -du /data/two.txt)
+15  15  data/two.txt
+
+2) change permission of file 
+
+hadoop fs -chmod 777 data\emp.txt								(hadoop fs -chmod 777 /data/emp.txt)
+
+hadoop fs -ls data\
+Found 5 items
+-rwxrwxrwx   1 Administrators None         15 2023-01-08 22:06 data/Two.txt
+-rwxrwxrwx   1 Administrators None         12 2023-01-08 23:16 data/emp.txt
+-rw-r--r--   1 Administrators None         15 2023-01-08 22:44 data/four.txt
+-rw-r--r--   1 Administrators None      43055 2023-01-08 20:33 data/one.txt
+-rwxrwxrwx   1 Administrators None      43055 2023-01-09 12:50 data/sample.txt
+
+3) Create an employee.txt file with some content and Moves this file from local file
+system to the Hadoop file system.
+
+hadoop fs -copyFromLocal "C:\Users\Acer\Desktop\employee.txt" data\       (hadoop fs -moveFromLocal /opt/hadoop/Desktop/symsc53/abc.txt /p1 )
+
+C:\hadoop-3.3.4\sbin>hadoop fs -ls data\
+
+
+4)  copy one file from one directory to another within HDFS
+
+hadoop fs -cp data\employee.txt data1								(hadoop fs -cp /opt/hadoop/BDA/a3.txt /SG2)
+
+hadoop fs -ls data1\
+
+
+
+5) display last 1kb data of employee.txt file
+hadoop fs -tail -f /p1/abc.txt
+hadoop fs -tail data\employee.txt									(hadoop fs -tail -f /p1/abc.txt)
+this is employee file
+---------------------------------------------------------------------------

@@ -1,0 +1,40 @@
+Q.1 
+Execute the following HDFS commands on Hadoop environment. [10]
+a) changing the group of ‘sample.zip’ file of the HDFS file system.
+b) changing the owner of a file name sample.
+c) prints a summary of the amount of disk usage of all files.
+d) show last modified time of directory
+e) implement test command
+
+1) change group of sample.zip					
+
+hadoop fs -chgrp mygrp data1\											(hadoop fs -chgrp mygrp /data1)
+
+chgrp: changing ownership of 'data1': GetSidFromAcctName error (1332): No mapping between account names and security IDs was done.
+
+
+
+2)changing the owner of a file name sample.
+hadoop fs -chown shivraj data1\									(hadoop fs -chown shivraj /data)
+
+3)  prints a summary of the amount of disk usage of all files.
+
+hadoop fs -du data1/demo.txt									(hadoop fs -du /data/demo.txt)
+15  15  data1/demo.txt
+
+4)show last modified time of directory
+
+
+hadoop fs -stat data1\demo.txt								(hadoop fs -stat /data1/demo.txt)
+2023-01-09 05:56:43
+
+5)implement test command
+
+hadoop fs -test -d data1								(hadoop fs -test -d /data1/demo.txt)
+echo $?											 (echo $?)
+
+
+---------------------------------------------------------------------
+Q.2 
+Implement matrix multiplication with Hadoop Map Reduce
+

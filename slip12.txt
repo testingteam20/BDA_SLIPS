@@ -1,0 +1,52 @@
+Q.1) 
+Execute the following HDFS commands on Hadoop environment. [10]
+a. create patient_detalis.txt file in Hospital directory and move this file in another
+directory within hdfs.
+b. display the total size of Hospital directory.
+c. show the statistics about the directory in the specified format.(%o,%r,%u,%y)
+d. list of all files in hospital directory.(add and list a minimum 4 files).
+e. delete hospital directory.
+(Note: you may create a file/directory depending on the command requirements.)
+
+1) create patient_detalis.txt file in Hospital directory and move this file in another
+directory within hdfs.
+
+hadoop fs -mkdir Hospital								(hadoop fs -mkdir /Hospital)
+hadoop fs -touchz patient_details.txt						(hadoop fs -touchz patient_details.txt)
+
+hadoop fs -mv patient_details.txt Hospital\					(hadoop fs -mv patient_details.txt /Hospital)
+
+hadoop fs -mv Hospital\patient_details.txt data1\				(hadoop fs -mv /Hospital/patient_details.txt /P1)
+
+hadoop fs -ls data1
+
+
+2)display the total size of Hospital directory
+
+hadoop fs -du Hospital\									(hadoop fs -du /Hospital)
+15  15  Hospital/emp.txt
+
+3) stat of file 
+hadoop fs -stat Hospital									(hadoop fs -stat /Hospital) 
+2023-01-09 08:06:40
+
+4) list of all files in hospital directory.(add and list a minimum 4 files).
+
+hadoop fs -ls Hospital									(hadoop fs -ls /Hospital)
+Found 1 items
+-rwx------   1 Acer None         15 2023-01-08 20:52 Hospital/emp.txt
+
+
+5) delete hospital directory.
+
+hadoop fs -rmr Hospital								(hadoop fs -rm /Hospital) 
+
+
+rmr: DEPRECATED: Please use '-rm -r' instead.
+2023-01-09 13:44:44,063 INFO Configuration.deprecation: io.bytes.per.checksum is deprecated. Instead, use dfs.bytes-per-checksum
+Deleted Hospital
+---------------------------------------------------------------------------
+Q.2) 
+Write mapreduce program to analyze employee details and find the count of employees
+in each department.employee details consists of list of employees with there department.
+

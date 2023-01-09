@@ -1,0 +1,81 @@
+Q.1 Execute the following HDFS commands on Hadoop environment. [10]
+a) Remove a demo directory from Hadoop environment. (Create a demo directory).
+b) Create a student.txt file in Hadoop environment and copy this file in root directory.
+c) display the content of student.txt file.
+d) expunge command
+e) df command
+
+cd sbin
+
+
+start-dfs.sh
+
+hadoop version
+
+hadoop fs -mkdir data                      linux-> hadoop fs -mkdir /data
+
+hadoop fs -ls						 	linux->	hadoop fs -ls
+
+
+1(remove directory)
+hadoop fs -mkdir demo					hadoop fs -mkdir /demo
+
+hadoop fs -ls							hadoop fs -ls
+
+hadoop fs -rmr demo						hadoop fs -rmr /demo
+
+2) copy file from hadoop to root directory
+ 
+									( hadoop fs -get /SG/a2.txt /opt/hadoop/Desktop/AAAAA )
+
+
+
+hadoop fs -ls data\						 (hadoop fs -ls /data )
+
+Found 2 items
+-rw-r--r--   1 Administrators None         15 2023-01-08 20:54 data/Two.txt
+-rw-r--r--   1 Administrators None      43055 2023-01-08 20:33 data/one.txt
+
+30 cat 								( hadoop fs -cat /opt/hadoop/BDA/a1.txt )
+hadoop fs -cat data\two.txt
+Output :
+
+data is here...
+
+
+4) expunge command
+hadoop fs -rm data\two.txt	        (hadoop fs -rm /data/two.txt)
+
+hadoop fs -expunge					hadoop fs -expunge
+				
+
+
+5) df command
+hadoop fs -df data		              (hadoop fs -df /data)
+
+output
+Filesystem          Size          Used     Available  Use%
+file:///    512092008448  125421277184  386670731264   24%
+-----------------------------------------------------------------------------------------
+
+Q2:
+ Write basic Word Count Map Reduce program using python/java to understand Map
+Reduce Paradigm. 
+
+from mrjob.job import MRJob
+class Count(MRJob):
+	
+	def mapper(self, _, line):
+		for word in line.split():
+			yield(word, 1)
+			
+	def reducer(self, word, counts):
+		yield(word, sum(counts))
+
+		
+if __name__ == '__main__':
+	Count.run()
+
+
+
+python CountWord.py -r hadoop hdfs:///hadoop_directory_name/data.txt

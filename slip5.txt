@@ -1,0 +1,57 @@
+Q. 1 
+Execute the following HDFS commands on Hadoop environment. [10]
+a. count the number of files and directories in HDFS.(Use options for the command)
+b. find
+c. getmerge
+d. usage
+e. test
+
+
+1) count the number of files and directories in HDFS.(Use options for the command)
+
+
+hadoop fs -count  data\emp.txt							( hadoop fs -count  /data/emp.txt)
+
+           0            1                 12 data/emp.txt
+
+
+2)find
+
+hadoop fs -find data1\						( hadoop fs -find /data1)
+data1
+data1/emp.txt
+data1/three.txt
+
+
+
+
+3)getmerge  (source hdfs destiation local)					( hadoop fs -getmerge -nl /data1/emp.txt five.txt)	
+
+									 
+
+hadoop fs -getmerge -nl data1\emp.txt data1\three.txt five.txt
+
+C:\hadoop-3.3.4\sbin>hadoop fs -cat five.txt
+data is here...
+data is here...
+
+4) usage
+
+
+hadoop fs -usage chmod						(hadoop fs -usage chmod	)
+
+Usage: hadoop fs [generic options] -chmod [-R] <MODE[,MODE]... | OCTALMODE> PATH...
+
+
+
+
+5) test
+
+
+
+hadoop fs -test -d neww3				(hadoop fs -test -d /neww3)
+
+C:\hadoop-3.3.4\sbin>echo $?
+0
+
+---------------------------------------------------------------------

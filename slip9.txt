@@ -1,0 +1,54 @@
+Q. 1 Execute the following HDFS commands on Hadoop environment. [10]
+a) create empty file in hdfs.
+b) copy sample.txt from local environment to HDFS.
+c) print the content of sample.txt file.
+d) display the total size of file.
+e) chmod command
+
+
+1) create empty file in hdfs
+
+hadoop fs -touchz file.txt							( hadoop fs -touchz file.txt)
+
+hadoop fs -ls										(hadoop fs -ls)
+
+
+2)  copy sample.txt from local environment to HDFS
+
+hadoop fs -copyFromLocal "C:\Users\Acer\Desktop\sample.txt" data\		(hadoop fs -copyFromLocal /opt/hadoop/BDA/a2.txt /SG
+
+C:\hadoop-3.3.4\sbin>hadoop fs -ls data\
+Found 5 items
+-rw-r--r--   1 Administrators None         15 2023-01-08 22:06 data/Two.txt
+-rw-r--r--   1 Administrators None         12 2023-01-08 23:16 data/emp.txt
+-rw-r--r--   1 Administrators None         15 2023-01-08 22:44 data/four.txt
+-rw-r--r--   1 Administrators None      43055 2023-01-08 20:33 data/one.txt
+-rw-r--r--   1 Administrators None      43055 2023-01-09 12:50 data/sample.txt
+
+3)  print the content of sample.txt file
+
+hadoop fs -cat data\sample.txt								(hadoop fs -cat /data/sample.txt)
+
+4) display the total size of file
+
+hadoop fs -du -s data\sample.txt								(hadoop fs -du /data/sample.txt) 
+43055  43055  data/sample.txt
+
+
+5) chmod command
+hadoop fs -chmod 777 data\Two.txt								(hadoop fs -chmod 777 /data/Two.txt)
+
+C:\hadoop-3.3.4\sbin>hadoop fs -ls data\						(hadoop fs -ls /data23)
+Found 5 items
+-rwxrwxrwx   1 Administrators None         15 2023-01-08 22:06 data/Two.txt
+-rw-r--r--   1 Administrators None         12 2023-01-08 23:16 data/emp.txt
+-rw-r--r--   1 Administrators None         15 2023-01-08 22:44 data/four.txt
+-rw-r--r--   1 Administrators None      43055 2023-01-08 20:33 data/one.txt
+-rwxrwxrwx   1 Administrators None      43055 2023-01-09 12:50 data/sample.txt
+-----------------------------------------------------------------------------
+
+Q2:
+Write MapReduce program using python/java to find out how many reviews for each
+rating. consider this dataset that consists of hotel reviews and ratings.
+
+
